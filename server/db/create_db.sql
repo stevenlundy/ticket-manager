@@ -40,6 +40,7 @@ CREATE TABLE `order_items` (
 
 CREATE TABLE `items` (
   `sku` varchar(20) NOT NULL UNIQUE,
+  `season` varchar(10) NOT NULL,
   `description` varchar(255) NOT NULL,
   `price` FLOAT NOT NULL,
   PRIMARY KEY (`sku`)
