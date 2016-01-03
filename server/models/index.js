@@ -32,6 +32,36 @@ module.exports = {
     }
   },
   orders: {
+    getAll: function() {
+      var orderQuery = "SELECT * FROM orders";
+      var orderItemQuery = "SELECT * FROM order_items";
+      var donationQuery = "SELECT * FROM donations";
+
+      var queries = []
+      queries.push(query(orderQuery, []));
+      queries.push(query(orderItemQuery, []));
+      queries.push(query(donationQuery, []));
+
+      return Promise.all(queries).then(function(results) {
+        var orders = results[0];
+        var orderItems = results[1];
+        var donations = results[2];
+
+        var results = {};
+        orders.forEach(function(order) {
+          results[order.id] = order;
+        });
+        orderItems.forEach(function(item) {
+          var items = results[item.order_id].items || [];
+          items.push(item);
+          results[item.order_id].items = items;
+        });
+        donations.forEach(function(donation) {
+          results[donation.order_id].donation = donation.amount;
+        });
+        return results;
+      })
+    },
     insert: function(data) {
       var queryString = "INSERT INTO orders (patron_number, order_type, date_purchased, new) VALUES (?, ?, ?, ?)";
       var queryArgs = [data.patron_number, data.order_type, data.date_purchased, data.new];
