@@ -73,9 +73,9 @@ module.exports = {
           if(data.items) {
             var queryString = "INSERT INTO order_items (order_id, item_sku, quantity) VALUES ?";
             var queryArgs = [];
-            for (var i = 0; i < data.items.length; i++) {
-              queryArgs.push([orderId, data.items[i].item_sku, data.items[i].quantity]);
-            }
+            data.items.forEach(function(item) {
+              queryArgs.push([orderId, item.item_sku, item.quantity]);
+            });
             return query(queryString, [queryArgs]);
           } else {
             return results;
