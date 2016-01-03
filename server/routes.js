@@ -15,6 +15,13 @@ router.post('/patrons', function(req, res) {
     res.status(400).send(err);
   });
 });
+router.put('/patrons/:patron_number', function(req, res) {
+  models.patrons.update(req.params.patron_number, req.body).then(function(patrons) {
+    res.status(202).send('Updated');
+  }).catch(function(err) {
+    res.status(400).send(err);
+  });
+});
 
 
 router.get('/items', function(req, res) {
@@ -27,6 +34,13 @@ router.get('/items', function(req, res) {
 router.post('/items', function(req, res) {
   models.items.insert(req.body).then(function(items) {
     res.status(201).send('Created');
+  }).catch(function(err) {
+    res.status(400).send(err);
+  });
+});
+router.put('/items/:sku', function(req, res) {
+  models.items.update(req.params.sku, req.body).then(function(items) {
+    res.status(202).send('Updated');
   }).catch(function(err) {
     res.status(400).send(err);
   });
