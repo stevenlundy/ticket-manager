@@ -1,13 +1,27 @@
 var mysql = require('mysql');
 
-// Create a database connection and export it from this file.
-// You will need to connect with the user "root", no password,
-// and to the database "chat".
-
 var dbConnection = mysql.createConnection({
   user: "root",
   password: "",
   database: "epo_orders",
 });
+
 dbConnection.connect();
-module.exports = dbConnection;
+
+var query = function(queryString, queryArgs) {
+  return new Promise(function (resolve, reject) {
+    dbConnection.query(queryString, queryArgs, function(err, results) {
+      if(err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+};
+
+module.exports = {
+  db: dbConnection,
+  query: query
+};
+

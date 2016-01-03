@@ -1,106 +1,65 @@
-var db = require('../db');
+var query = require('../db').query;
 
 module.exports = {
   patrons: {
-    getAll: function(callback) {
+    getAll: function() {
       var queryString = "SELECT * FROM patrons";
       var queryArgs = [];
-
-      db.query(queryString, queryArgs, function(err, results){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, results);
-        }
-      });
+      return query(queryString, queryArgs);
     },
-    insert: function(data, callback) {
+    insert: function(data) {
       var queryString = "INSERT INTO patrons SET ?";
       var queryArgs = data;
-
-      db.query(queryString, queryArgs, function(err, results){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, results);
-        }
-      });
+      return query(queryString, queryArgs);
     },
-    update: function(data, callback) {
+    update: function(data) {
 
     }
   },
   items: {
-    getAll: function(callback) {
+    getAll: function() {
       var queryString = "SELECT * FROM items";
       var queryArgs = [];
-
-      db.query(queryString, queryArgs, function(err, results){
-        if(err) {
-          callback(err);
-        } else {
-          callback(null, results);
-        }
-      });
+      return query(queryString, queryArgs);
     },
-    insert: function(data, callback) {
+    insert: function(data) {
       var queryString = "INSERT INTO items SET ?";
       var queryArgs = data;
-
-      db.query(queryString, queryArgs, function(err, results){
-        if(err) {
-          callback(err);
-        } else {
-          callback(null, results);
-        }
-      });
+      return query(queryString, queryArgs);
     },
-    update: function(data, callback) {
+    update: function(data) {
 
     }
   },
   orders: {
-    insert: function(data, callback) {
+    insert: function(data) {
       var queryString = "INSERT INTO orders (patron_number, order_type, date_purchased, new) VALUES (?, ?, ?, ?)";
       var queryArgs = [data.patron_number, data.order_type, data.date_purchased, data.new];
+      var orderId;
 
-      db.query(queryString, queryArgs, function(err, results) {
-        if(err) {
-          callback(err);
-        } else {
-          var orderId = results.insertId
+      return query(queryString, queryArgs)
+        .then(function(results) {
+          orderId = results.insertId
           if(data.items) {
             var queryString = "INSERT INTO order_items (order_id, item_sku, quantity) VALUES ?";
             var queryArgs = [];
             for (var i = 0; i < data.items.length; i++) {
               queryArgs.push([orderId, data.items[i].item_sku, data.items[i].quantity]);
             }
-            console.log(queryString);
-            console.log(queryArgs);
+            return query(queryString, [queryArgs]);
           } else {
-            var queryString = "DO 1"; // Do nothing
-            var queryArgs = [];
+            return results;
           }
-          db.query(queryString, [queryArgs], function(err, results) {
-            if(err) {
-              callback(err);
-            } else if (data.donation) {
-              var queryString = "INSERT INTO donations (order_id, amount) VALUES (?, ?)";
-              var queryArgs = [orderId, data.donation];
-
-              db.query(queryString, queryArgs, function(err, results) {
-                if(err) {
-                  callback(err);
-                } else {
-                  callback(null, results);
-                }
-              });
-            } else {
-              callback(null, results);
-            }
-          });
-        }
-      });
+        })
+        .then(function(results){
+          if (data.donation) {
+            var queryString = "INSERT INTO donations (order_id, amount) VALUES (?, ?)";
+            var queryArgs = [orderId, data.donation];
+            return query(queryString, queryArgs);
+          } else {
+            return results
+          }
+        });
     }
   }
 };
