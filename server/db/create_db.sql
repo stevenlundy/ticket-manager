@@ -1,4 +1,4 @@
-CREATE DATABASE epo_orders;
+/*CREATE DATABASE epo_orders;*/
 
 USE epo_orders;
 
@@ -19,7 +19,7 @@ CREATE TABLE `patrons` (
 
 CREATE TABLE `orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `patron_number` varchar(5) NOT NULL,
+  `patron_number` varchar(5),
   `order_type` varchar(20) NOT NULL,
   `date_purchased` DATE NOT NULL,
   `date_sent` DATE NOT NULL,

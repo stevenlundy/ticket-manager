@@ -72,7 +72,7 @@ module.exports = {
   },
   orders: {
     getAll: function() {
-      var orderQuery = "SELECT * FROM orders JOIN patrons ON orders.patron_number=patrons.patron_number";
+      var orderQuery = "SELECT * FROM orders LEFT JOIN patrons ON orders.patron_number=patrons.patron_number";
       var orderItemQuery = "SELECT * FROM order_items";
       var donationQuery = "SELECT * FROM donations";
 
