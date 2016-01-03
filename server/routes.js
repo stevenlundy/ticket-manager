@@ -29,6 +29,18 @@ router.post('/patrons', function(req, res) {
     res.status(400).send(err);
   });
 });
+router.post('/patrons/:type', function(req, res) {
+  models.patrons.getNextPatronNumber(req.params.type)
+    .then(function(patron_number) {
+      req.body.patron_number = patron_number;
+      return models.patrons.insert(req.body);
+    })
+    .then(function(patrons) {
+      res.status(201).send('Created');
+    }).catch(function(err) {
+      res.status(400).send(err);
+    });
+});
 router.put('/patrons/:patron_number', function(req, res) {
   models.patrons.update(req.params.patron_number, req.body).then(function(patrons) {
     res.status(202).send('Updated');
