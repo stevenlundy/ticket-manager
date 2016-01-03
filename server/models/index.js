@@ -12,6 +12,21 @@ module.exports = {
       var queryArgs = [patron_number];
       return query(queryString, queryArgs);
     },
+    getNextPatronNumber: function(type) {
+      // Assuming patron_number is in the format L#### (e.g. A0373, M0045)
+      type = type.charAt(0).toUpperCase();
+      var queryString = "SELECT patron_number FROM patrons WHERE patron_number LIKE ? ORDER BY patron_number DESC LIMIT 1";
+      var queryArgs = [type + '%'];
+      return query(queryString, queryArgs)
+        .then(function(results) {
+          if(results.length) {
+            var nextNum = parseInt(results[0].patron_number.slice(-4)) + 1;
+            return type + ('000' + nextNum).slice(-4);
+          } else {
+            return type + '0000';
+          }
+        });
+    },
     getOrders: function(patron_number) {
       var patronOrders = {};
       var queryString = "SELECT * FROM orders WHERE patron_number = ?";
