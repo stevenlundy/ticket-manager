@@ -13,7 +13,9 @@ module.exports = {
       return query(queryString, queryArgs);
     },
     update: function(data) {
-
+      var queryString = "UPDATE patrons SET ? WHERE patron_number = ?";
+      var queryArgs = [data, data.patron_number];
+      return query(queryString, queryArgs);
     }
   },
   items: {
@@ -28,7 +30,9 @@ module.exports = {
       return query(queryString, queryArgs);
     },
     update: function(data) {
-
+      var queryString = "UPDATE items SET ? WHERE id = ?";
+      var queryArgs = [data, data.id];
+      return query(queryString, queryArgs);
     }
   },
   orders: {
