@@ -8,6 +8,20 @@ router.get('/patrons', function(req, res) {
     res.status(400).send(err);
   });
 });
+router.get('/patrons/:patron_number', function(req, res) {
+  models.patrons.getOne(req.params.patron_number).then(function(patron) {
+    res.status(200).send(patron[0]);
+  }).catch(function(err) {
+    res.status(400).send(err);
+  });
+});
+router.get('/patrons/:patron_number/orders', function(req, res) {
+  models.patrons.getOrders(req.params.patron_number).then(function(orders) {
+    res.status(200).send(orders);
+  }).catch(function(err) {
+    res.status(400).send(err);
+  });
+});
 router.post('/patrons', function(req, res) {
   models.patrons.insert(req.body).then(function(patrons) {
     res.status(201).send('Created');

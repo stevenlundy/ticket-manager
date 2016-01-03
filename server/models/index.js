@@ -7,6 +7,41 @@ module.exports = {
       var queryArgs = [];
       return query(queryString, queryArgs);
     },
+    getOne: function(patron_number) {
+      var queryString = "SELECT * FROM patrons WHERE patron_number = ?";
+      var queryArgs = [patron_number];
+      return query(queryString, queryArgs);
+    },
+    getOrders: function(patron_number) {
+      var patronOrders = {};
+      var queryString = "SELECT * FROM orders WHERE patron_number = ?";
+      var queryArgs = [patron_number];
+      return query(queryString, queryArgs)
+        .then(function(orders) {
+          var queries = [];
+          orders.forEach(function(order) {
+            patronOrders[order.id] = order;
+            queries.push(query("SELECT * FROM order_items WHERE order_id = ?", [order.id]));
+            queries.push(query("SELECT * FROM donations WHERE order_id = ?", [order.id]));
+          });
+          return Promise.all(queries);
+        })
+        .then(function(results) {
+          for (var i = 0; i < results.length; i += 2) {
+            var orderItems = results[i];
+            var donations = results[i + 1];
+            orderItems.forEach(function(item) {
+              var items = patronOrders[item.order_id].items || [];
+              items.push(item);
+              patronOrders[item.order_id].items = items;
+            });
+            donations.forEach(function(donation) {
+              patronOrders[donation.order_id].donation = donation.amount;
+            });
+          }
+          return patronOrders;
+        });
+    },
     insert: function(data) {
       var queryString = "INSERT INTO patrons SET ?";
       var queryArgs = data;
