@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="ticketManager">
 <head>
+  <base href="/">
   <meta charset="UTF-8">
-  <title>Tickets</title>
+  <title>Ticket Manager</title>
+  <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular-route/angular-route.js"></script>
+  <script src="app/app.js"></script>
+  <script src="app/controllers/patrons.js"></script>
 </head>
 <body>
-
+  <h1>Ticket Manager</h1>
+  <div ng-view></div>
 </body>
 </html>
